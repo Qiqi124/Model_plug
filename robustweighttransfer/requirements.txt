@@ -1,3 +1,0 @@
-scipy
-libigl==2.5.1
-robust-laplacian
