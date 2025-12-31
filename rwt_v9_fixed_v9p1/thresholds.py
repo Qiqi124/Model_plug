@@ -17,10 +17,16 @@ NORMAL_ANGLE_OFFSET_DEG: float = 0.0
 # -----------------------------
 # Class 1b — Supergroup (UI-adjustable semantics)
 # -----------------------------
-# Supergroup merge thresholds are built in WORLD units from mesh sampling density (d_nn) and user scales.
-# eps_force_raw = d_nn * (10**A) * SUPERGROUP_EPS_FORCE_BASE
-# eps_norm_raw  = d_nn * (10**B) * SUPERGROUP_EPS_NORM_BASE
-# # then clamped: eps = clamp(eps_raw, max(SUPERGROUP_EPS_ABS_MIN, d_nn*SUPERGROUP_EPS_REL_MIN), d_nn*SUPERGROUP_EPS_REL_MAX)
+# Supergroup merge thresholds are world-unit sliders based on object scale (bbox diagonal).
+# Raw slider ranges (world):
+#   - Force merge / Face clean:  bbox_diag × [1e-8, 1e-1]  (A in [-1, 6] when base=1e-7)
+#   - Normal merge:              bbox_diag × [1e-4, 1]    (B in [-1, 3] when base=1e-3)
+# Formulas (raw UI value before REL clamp):
+#   eps_force_raw = bbox_diag * (10**A) * SUPERGROUP_EPS_FORCE_BASE
+#   eps_norm_raw  = bbox_diag * (10**B) * SUPERGROUP_EPS_NORM_BASE
+#   face_raw      = bbox_diag * (10**C) * FACE_CLEAN_HEIGHT_BASE
+# Final clamp is density-based (per-vertex d_nn):
+#   eps = clamp(eps_raw, max(SUPERGROUP_EPS_ABS_MIN, d_nn*SUPERGROUP_EPS_REL_MIN), d_nn*SUPERGROUP_EPS_REL_MAX)
 SUPERGROUP_EPS_FORCE_BASE: float = 1e-7
 SUPERGROUP_EPS_NORM_BASE: float = 1e-3
 

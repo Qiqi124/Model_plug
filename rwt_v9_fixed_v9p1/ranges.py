@@ -124,9 +124,13 @@ def estimate_clamp_effect_range(
     return lo, hi
 
 
-# Default raw-input reference domain: expressed as a fraction of bbox diagonal.
-DOMAIN_RATIO_MIN: float = 1e-8
-DOMAIN_RATIO_MAX: float = 1e-1
+# Default raw-input reference domains (as a fraction of bbox diagonal).
+# - Force/Face: 1e-8 .. 1e-1 (matches 10**[-8,-1] × bbox when base=1e-7)
+# - Normal:     1e-4 .. 1    (matches 10**[-4,0] × bbox when base=1e-3)
+DOMAIN_RATIO_MIN_FORCE_FACE: float = 1e-8
+DOMAIN_RATIO_MAX_FORCE_FACE: float = 1e-1
+DOMAIN_RATIO_MIN_MID: float = 1e-4
+DOMAIN_RATIO_MAX_MID: float = 1.0
 
 
 def _intersect(lo: float, hi: float, lo2: float, hi2: float) -> Tuple[float, float]:
@@ -143,8 +147,8 @@ def calculate_midband_reference_range(
     raw_value: Optional[float] = None,
     clamp_enabled: bool,
     clamp_context: Optional[ClampContext],
-    domain_ratio_min: float = DOMAIN_RATIO_MIN,
-    domain_ratio_max: float = DOMAIN_RATIO_MAX,
+    domain_ratio_min: float = DOMAIN_RATIO_MIN_MID,
+    domain_ratio_max: float = DOMAIN_RATIO_MAX_MID,
 ) -> RangeResult:
     base_lo = float(bbox_diag) * float(domain_ratio_min)
     base_hi = float(bbox_diag) * float(domain_ratio_max)
@@ -170,8 +174,8 @@ def calculate_minband_reference_range(
     raw_value: Optional[float] = None,
     clamp_enabled: bool,
     clamp_context: Optional[ClampContext],
-    domain_ratio_min: float = DOMAIN_RATIO_MIN,
-    domain_ratio_max: float = DOMAIN_RATIO_MAX,
+    domain_ratio_min: float = DOMAIN_RATIO_MIN_FORCE_FACE,
+    domain_ratio_max: float = DOMAIN_RATIO_MAX_FORCE_FACE,
     hierarchy_div: float = 5.0,
 ) -> RangeResult:
     base_lo = float(bbox_diag) * float(domain_ratio_min)
@@ -200,8 +204,8 @@ def calculate_face_clean_reference_range(
     raw_value: Optional[float] = None,
     clamp_enabled: bool,
     clamp_context: Optional[ClampContext],
-    domain_ratio_min: float = DOMAIN_RATIO_MIN,
-    domain_ratio_max: float = DOMAIN_RATIO_MAX,
+    domain_ratio_min: float = DOMAIN_RATIO_MIN_FORCE_FACE,
+    domain_ratio_max: float = DOMAIN_RATIO_MAX_FORCE_FACE,
     hierarchy_div: float = 5.0,
 ) -> RangeResult:
     base_lo = float(bbox_diag) * float(domain_ratio_min)
